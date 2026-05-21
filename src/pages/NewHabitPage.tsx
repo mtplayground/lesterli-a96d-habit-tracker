@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+import { HabitForm } from '../components/HabitForm'
 
 export function NewHabitPage() {
+  const navigate = useNavigate()
+
   return (
-    <section className="space-y-4" aria-labelledby="new-habit-title">
+    <section className="max-w-2xl space-y-6" aria-labelledby="new-habit-title">
       <Link
         className="inline-flex rounded-md text-sm font-semibold text-brand transition hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand"
         to="/"
@@ -15,9 +19,15 @@ export function NewHabitPage() {
           Create a habit
         </h1>
         <p className="max-w-2xl text-base leading-7 text-ink-muted">
-          This route is ready for the habit creation workflow.
+          Add a habit you want to track and return to the dashboard.
         </p>
       </div>
+
+      <HabitForm
+        onCancel={() => navigate('/')}
+        onSaved={() => navigate('/')}
+        submitLabel="Create habit"
+      />
     </section>
   )
 }
