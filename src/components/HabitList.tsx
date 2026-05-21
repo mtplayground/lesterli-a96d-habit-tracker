@@ -8,12 +8,14 @@ import { HabitCard } from './HabitCard'
 
 export interface HabitListProps {
   onCreateHabit?: () => void
+  renderHabitDetails?: (habit: Habit) => ReactNode
   renderStreakBadge?: (habit: Habit) => ReactNode
   todayKey?: DateKey
 }
 
 export function HabitList({
   onCreateHabit,
+  renderHabitDetails,
   renderStreakBadge,
   todayKey,
 }: HabitListProps) {
@@ -50,12 +52,13 @@ export function HabitList({
       {visibleHabits.length > 0 ? (
         <ul className="grid gap-4 md:grid-cols-2">
           {visibleHabits.map((habit) => (
-            <li key={habit.id}>
+            <li className="space-y-3" key={habit.id}>
               <HabitCard
                 habit={habit}
                 streakBadge={renderStreakBadge?.(habit)}
                 todayKey={todayKey}
               />
+              {renderHabitDetails?.(habit)}
             </li>
           ))}
         </ul>

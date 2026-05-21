@@ -77,4 +77,20 @@ describe('HabitList', () => {
 
     expect(screen.getByLabelText('Streak')).toHaveTextContent('5 days')
   })
+
+  it('renders habit detail slots for each habit', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Journal', color: '#7c3aed' })
+
+    render(
+      <HabitList
+        renderHabitDetails={({ id }) =>
+          id === habit.id ? <p>Journal heatmap</p> : null
+        }
+      />,
+    )
+
+    expect(screen.getByText('Journal heatmap')).toBeVisible()
+  })
 })
