@@ -52,6 +52,38 @@ const normalizeHabit = (habit: NewHabit, createdAt: string): Habit => ({
   archivedAt: null,
 })
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const arrayOrEmpty = <T>(value: unknown): T[] =>
+  Array.isArray(value) ? (value as T[]) : []
+
+const isHabitStoreState = (value: unknown): value is HabitStoreState =>
+  isRecord(value) &&
+  value.schemaVersion === SchemaVersion &&
+  Array.isArray(value.habits) &&
+  Array.isArray(value.checkIns)
+
+export const migrateHabitStore = (
+  persistedState: unknown,
+  version: number,
+): HabitStoreState => {
+  if (!isRecord(persistedState)) {
+    return initialState
+  }
+
+  switch (version) {
+    case SchemaVersion:
+      return isHabitStoreState(persistedState) ? persistedState : initialState
+    default:
+      return {
+        schemaVersion: SchemaVersion,
+        habits: arrayOrEmpty<Habit>(persistedState.habits),
+        checkIns: arrayOrEmpty<CheckIn>(persistedState.checkIns),
+      }
+  }
+}
+
 export const useHabitStore = create<HabitStore>()(
   persist(
     (set, get) => ({
@@ -152,6 +184,7 @@ export const useHabitStore = create<HabitStore>()(
       name: HABIT_STORE_STORAGE_KEY,
       version: SchemaVersion,
       storage: createJSONStorage(() => localStorage),
+      migrate: migrateHabitStore,
       partialize: ({ schemaVersion, habits, checkIns }) => ({
         schemaVersion,
         habits,
