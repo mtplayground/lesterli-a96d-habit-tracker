@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { useHabitStore } from '../stores/habitStore'
 import type { DateKey, Habit } from '../types/habit'
+import { today } from '../utils/date'
+import { computeStreaks } from '../utils/streaks'
 import { CheckInToggle } from './CheckInToggle'
+import { StreakBadge } from './StreakBadge'
 
 export interface HabitCardProps {
   habit: Habit
@@ -19,8 +22,18 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
   const archiveHabit = useHabitStore((state) => state.archiveHabit)
   const restoreHabit = useHabitStore((state) => state.restoreHabit)
   const deleteHabit = useHabitStore((state) => state.deleteHabit)
+  const checkIns = useHabitStore((state) => state.checkIns)
   const currentHabit = storedHabit ?? habit
   const isArchived = currentHabit.archivedAt !== null
+  const currentDateKey = todayKey ?? today()
+  const streaks = useMemo(
+    () =>
+      computeStreaks(
+        checkIns.filter((checkIn) => checkIn.habitId === currentHabit.id),
+        currentDateKey,
+      ),
+    [checkIns, currentDateKey, currentHabit.id],
+  )
 
   return (
     <article className="rounded-lg border border-line bg-surface-raised p-5 shadow-soft">
@@ -86,11 +99,13 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
         <CheckInToggle
           disabled={isArchived}
           habitId={currentHabit.id}
-          todayKey={todayKey}
+          todayKey={currentDateKey}
         />
 
         <div className="min-h-8" aria-label="Streak">
-          {streakBadge}
+          {streakBadge ?? (
+            <StreakBadge current={streaks.current} longest={streaks.longest} />
+          )}
         </div>
       </div>
 

@@ -54,10 +54,33 @@ describe('HabitCard', () => {
     expect(
       screen.getByRole('button', { name: 'Checked today' }),
     ).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByLabelText('Current streak: 1 day')).toHaveAttribute(
+      'title',
+      'Longest streak: 1 day',
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Checked today' }))
 
     expect(useHabitStore.getState().checkIns).toEqual([])
+  })
+
+  it('renders the current and longest streak badge for the habit', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Walk', color: '#28705c' })
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-15')
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-16')
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-17')
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-20')
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-21')
+
+    render(<HabitCard habit={habit} todayKey="2026-05-21" />)
+
+    const badge = screen.getByLabelText('Current streak: 2 days')
+
+    expect(badge).toHaveTextContent('🔥')
+    expect(badge).toHaveTextContent('2 days')
+    expect(badge).toHaveAttribute('title', 'Longest streak: 3 days')
   })
 
   it('archives a habit from the actions menu', () => {
