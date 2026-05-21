@@ -29,3 +29,35 @@
     @apply min-h-svh;
   }
 }
+
+@layer components {
+  .habit-heatmap {
+    @apply w-full overflow-x-auto rounded-md border border-line bg-surface-raised p-3;
+  }
+
+  .habit-heatmap .react-calendar-heatmap {
+    min-width: 42rem;
+  }
+
+  .habit-heatmap .react-calendar-heatmap text {
+    fill: var(--color-ink-soft);
+    font-size: 0.625rem;
+  }
+
+  .habit-heatmap .habit-heatmap-day {
+    stroke: var(--color-line);
+    stroke-width: 0.5px;
+    cursor: pointer;
+  }
+
+  .habit-heatmap .habit-heatmap-day--empty {
+    fill: var(--color-surface-muted);
+  }
+
+  .habit-heatmap .habit-heatmap-day:hover,
+  .habit-heatmap .habit-heatmap-day:focus {
+    stroke: var(--color-ink-muted);
+    stroke-width: 1px;
+    outline: none;
+  }
+}
