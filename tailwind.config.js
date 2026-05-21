@@ -5,21 +5,21 @@ export default {
     extend: {
       colors: {
         ink: {
-          DEFAULT: '#17201b',
-          muted: '#4b5b51',
-          soft: '#66756c',
+          DEFAULT: 'var(--color-ink)',
+          muted: 'var(--color-ink-muted)',
+          soft: 'var(--color-ink-soft)',
         },
         surface: {
-          DEFAULT: '#f7faf7',
-          raised: '#ffffff',
-          muted: '#edf3ee',
+          DEFAULT: 'var(--color-surface)',
+          raised: 'var(--color-surface-raised)',
+          muted: 'var(--color-surface-muted)',
         },
         brand: {
-          DEFAULT: '#28705c',
-          dark: '#174d3e',
-          light: '#dcefe7',
+          DEFAULT: 'var(--color-brand)',
+          dark: 'var(--color-brand-dark)',
+          light: 'var(--color-brand-light)',
         },
-        line: '#d7e1da',
+        line: 'var(--color-line)',
       },
       fontFamily: {
         sans: [
