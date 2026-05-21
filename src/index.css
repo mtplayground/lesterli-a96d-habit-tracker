@@ -4,6 +4,17 @@
 
 @layer base {
   :root {
+    --color-ink: #17201b;
+    --color-ink-muted: #4b5b51;
+    --color-ink-soft: #66756c;
+    --color-surface: #f7faf7;
+    --color-surface-raised: #ffffff;
+    --color-surface-muted: #edf3ee;
+    --color-brand: #28705c;
+    --color-brand-dark: #174d3e;
+    --color-brand-light: #dcefe7;
+    --color-line: #d7e1da;
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
