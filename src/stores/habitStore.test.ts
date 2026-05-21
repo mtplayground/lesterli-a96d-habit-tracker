@@ -71,6 +71,20 @@ describe('useHabitStore', () => {
     expect(archivedHabit?.updatedAt).toBe(archivedHabit?.archivedAt)
   })
 
+  it('restores an archived habit', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Exercise', color: '#28705c' })
+
+    useHabitStore.getState().archiveHabit(habit.id)
+    useHabitStore.getState().restoreHabit(habit.id)
+
+    expect(useHabitStore.getState().habits[0]).toMatchObject({
+      id: habit.id,
+      archivedAt: null,
+    })
+  })
+
   it('deletes a habit and its check-ins', () => {
     const habit = useHabitStore
       .getState()

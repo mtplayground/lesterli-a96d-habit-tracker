@@ -20,6 +20,7 @@ interface HabitStoreActions {
   addHabit: (habit: NewHabit) => Habit
   updateHabit: (habitId: HabitId, updates: HabitUpdate) => void
   archiveHabit: (habitId: HabitId) => void
+  restoreHabit: (habitId: HabitId) => void
   deleteHabit: (habitId: HabitId) => void
   toggleCheckIn: (habitId: HabitId, dateKey: DateKey) => void
 }
@@ -130,6 +131,19 @@ export const useHabitStore = create<HabitStore>()(
           habits: state.habits.map((habit) =>
             habit.id === habitId
               ? { ...habit, archivedAt, updatedAt: archivedAt }
+              : habit,
+          ),
+        }))
+      },
+
+      restoreHabit: (habitId) => {
+        const updatedAt = timestamp()
+
+        set((state) => ({
+          schemaVersion: SchemaVersion,
+          habits: state.habits.map((habit) =>
+            habit.id === habitId
+              ? { ...habit, archivedAt: null, updatedAt }
               : habit,
           ),
         }))
