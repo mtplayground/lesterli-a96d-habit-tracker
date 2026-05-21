@@ -30,11 +30,27 @@ describe('HeatmapCalendar', () => {
     expect(screen.getAllByTestId('heatmap-day')).toHaveLength(
       HEATMAP_TRAILING_DAYS,
     )
-    expect(screen.getByLabelText('2025-05-22: no check-in')).toBeVisible()
-    expect(screen.getByLabelText('2026-05-21: no check-in')).toBeVisible()
+    expect(screen.getByLabelText('May 22, 2025: Not completed')).toBeVisible()
+    expect(screen.getByLabelText('May 21, 2026: Not completed')).toBeVisible()
     expect(
-      screen.queryByLabelText('2025-05-21: no check-in'),
+      screen.queryByLabelText('May 21, 2025: Not completed'),
     ).not.toBeInTheDocument()
+  })
+
+  it('shows formatted date and completion status in cell tooltips', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Read', color: '#174d3e' })
+    useHabitStore.getState().toggleCheckIn(habit.id, '2026-05-20')
+
+    render(<HeatmapCalendar habit={habit} todayKey="2026-05-21" />)
+
+    expect(screen.getByLabelText('May 20, 2026: Completed')).toHaveTextContent(
+      'May 20, 2026: Completed',
+    )
+    expect(
+      screen.getByLabelText('May 21, 2026: Not completed'),
+    ).toHaveTextContent('May 21, 2026: Not completed')
   })
 
   it('fills checked dates with the habit color and leaves empty dates muted', () => {
@@ -45,10 +61,10 @@ describe('HeatmapCalendar', () => {
 
     render(<HeatmapCalendar habit={habit} todayKey="2026-05-21" />)
 
-    expect(screen.getByLabelText('2026-05-20: checked in')).toHaveStyle({
+    expect(screen.getByLabelText('May 20, 2026: Completed')).toHaveStyle({
       fill: '#174d3e',
     })
-    expect(screen.getByLabelText('2026-05-21: no check-in')).toHaveStyle({
+    expect(screen.getByLabelText('May 21, 2026: Not completed')).toHaveStyle({
       fill: 'var(--color-surface-muted)',
     })
   })
@@ -60,17 +76,17 @@ describe('HeatmapCalendar', () => {
 
     render(<HeatmapCalendar habit={habit} todayKey="2026-05-21" />)
 
-    fireEvent.click(screen.getByLabelText('2026-05-20: no check-in'))
+    fireEvent.click(screen.getByLabelText('May 20, 2026: Not completed'))
 
     expect(useHabitStore.getState().checkIns).toMatchObject([
       { habitId: habit.id, dateKey: '2026-05-20' },
     ])
-    expect(screen.getByLabelText('2026-05-20: checked in')).toHaveAttribute(
+    expect(screen.getByLabelText('May 20, 2026: Completed')).toHaveAttribute(
       'data-checked',
       'true',
     )
 
-    fireEvent.keyDown(screen.getByLabelText('2026-05-20: checked in'), {
+    fireEvent.keyDown(screen.getByLabelText('May 20, 2026: Completed'), {
       key: 'Enter',
     })
 
