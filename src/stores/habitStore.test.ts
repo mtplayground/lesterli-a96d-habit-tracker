@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { HABIT_STORE_STORAGE_KEY, useHabitStore } from './habitStore'
+import {
+  HABIT_STORE_STORAGE_KEY,
+  migrateHabitStore,
+  useHabitStore,
+} from './habitStore'
 import { SchemaVersion } from '../types/habit'
 
 describe('useHabitStore', () => {
@@ -65,5 +69,33 @@ describe('useHabitStore', () => {
 
     expect(persistedState).toContain(`"version":${SchemaVersion}`)
     expect(persistedState).toContain(`"schemaVersion":${SchemaVersion}`)
+  })
+
+  it('keeps v1 persisted state unchanged during migration', () => {
+    const persistedState = {
+      schemaVersion: SchemaVersion,
+      habits: [],
+      checkIns: [],
+    }
+
+    expect(migrateHabitStore(persistedState, SchemaVersion)).toBe(
+      persistedState,
+    )
+  })
+
+  it('stamps migrated legacy state with the current schema version', () => {
+    const migratedState = migrateHabitStore(
+      {
+        habits: [],
+        checkIns: [],
+      },
+      0,
+    )
+
+    expect(migratedState).toEqual({
+      schemaVersion: SchemaVersion,
+      habits: [],
+      checkIns: [],
+    })
   })
 })
