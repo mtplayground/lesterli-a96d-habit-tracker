@@ -1,0 +1,66 @@
+# Architecture Plan
+
+## Project Shape
+
+Build a Vite + React + TypeScript single-page app for local-first habit tracking. The app should be static-deployable, use strict TypeScript, Tailwind CSS for styling, Zustand for state management with `localStorage` persistence, Vitest/React Testing Library for unit and component tests, and Playwright for the final happy-path E2E test.
+
+## Module Structure
+
+```text
+src/
+  app/
+    App.tsx
+    router.tsx
+  components/
+    habits/
+      HabitForm.tsx
+      HabitCard.tsx
+      HabitList.tsx
+      EmptyState.tsx
+      CheckInToggle.tsx
+      HeatmapCalendar.tsx
+      StreakBadge.tsx
+      StatsPanel.tsx
+    ui/
+      ConfirmDialog.tsx
+  pages/
+    DashboardPage.tsx
+    HabitDetailPage.tsx
+    NewHabitPage.tsx
+  store/
+    habitStore.ts
+    persistence.ts
+    migrations.ts
+  types/
+    habit.ts
+  utils/
+    dates.ts
+    streaks.ts
+    stats.ts
+    importExport.ts
+  test/
+    setup.ts
+```
+
+Shared domain types live in `src/types/habit.ts` and should be imported by store, utility, and component modules. Store actions own mutations and persistence. Date, streak, stats, and import/export logic should stay outside React components so they can be tested directly.
+
+## Issue Dependencies
+
+1. Foundation: #1, #2, #3, #4, #5
+2. Domain and data layer: #6, #7, #8, #9
+3. Date and analytics utilities: #10, #11, #12
+4. Core habit UI: #13, #14, #15, #16, #17
+5. Heatmap and feedback UI: #18, #19, #20, #21, #22
+6. Routing and pages: #23, #24, #25, #26
+7. Data portability: #27, #28
+8. Final quality pass: #29, #30, #31
+
+## Key Design Decisions
+
+- Model habits as immutable records with stable IDs, metadata, archive state, and check-ins keyed by local date strings (`YYYY-MM-DD`).
+- Treat the local timezone as the source of truth for "today"; avoid UTC date keys for user-facing check-ins.
+- Keep migrations versioned and idempotent, even if the first scaffold only supports the initial schema.
+- Persist only serializable app state, not derived streaks or stats. Compute derived values from `Habit` and `CheckIn` data.
+- Validate imported JSON before mutating the store, then run it through the migration layer.
+- Prefer accessible native controls, focus management for dialogs, keyboard support for heatmap toggles, and visible focus states from the start.
+- Keep routes simple: `/` for active habits, `/habits/new` for creation, and `/habits/:id` for detail/edit/stats/history.
