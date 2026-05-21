@@ -6,6 +6,7 @@ import type { DateKey, Habit } from '../types/habit'
 import { today } from '../utils/date'
 import { computeStreaks } from '../utils/streaks'
 import { CheckInToggle } from './CheckInToggle'
+import { StatsPanel } from './StatsPanel'
 import { StreakBadge } from './StreakBadge'
 
 export interface HabitCardProps {
@@ -108,6 +109,8 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
           )}
         </div>
       </div>
+
+      <StatsPanel habitId={currentHabit.id} todayKey={currentDateKey} />
 
       {isArchived ? (
         <p className="mt-4 text-xs font-semibold uppercase text-ink-soft">
