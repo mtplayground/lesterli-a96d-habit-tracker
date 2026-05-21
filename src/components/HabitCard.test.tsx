@@ -81,6 +81,9 @@ describe('HabitCard', () => {
     expect(badge).toHaveTextContent('🔥')
     expect(badge).toHaveTextContent('2 days')
     expect(badge).toHaveAttribute('title', 'Longest streak: 3 days')
+    expect(
+      screen.getByRole('group', { name: '30-day stats' }),
+    ).toHaveTextContent('5 / 30')
   })
 
   it('archives a habit from the actions menu', () => {
