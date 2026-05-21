@@ -78,6 +78,21 @@ describe('HabitCard', () => {
     ).toBeDisabled()
   })
 
+  it('restores an archived habit from the actions menu', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Read', color: '#2563eb' })
+    useHabitStore.getState().archiveHabit(habit.id)
+
+    render(<HabitCard habit={habit} />)
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Restore' }))
+
+    expect(useHabitStore.getState().habits[0]?.archivedAt).toBeNull()
+    expect(screen.queryByText('Archived')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Check in today' })).toBeEnabled()
+  })
+
   it('deletes a habit and its check-ins from the actions menu', () => {
     const habit = useHabitStore
       .getState()
@@ -88,7 +103,27 @@ describe('HabitCard', () => {
 
     fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
 
+    expect(
+      screen.getByRole('dialog', { name: 'Delete Journal?' }),
+    ).toBeVisible()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete habit' }))
+
     expect(useHabitStore.getState().habits).toEqual([])
     expect(useHabitStore.getState().checkIns).toEqual([])
+  })
+
+  it('cancels delete confirmation without deleting', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Journal', color: '#7c3aed' })
+
+    render(<HabitCard habit={habit} />)
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(useHabitStore.getState().habits).toHaveLength(1)
   })
 })
