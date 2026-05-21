@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 import { useHabitStore } from '../stores/habitStore'
 import type { DateKey, Habit } from '../types/habit'
-import { today } from '../utils/date'
+import { CheckInToggle } from './CheckInToggle'
 
 export interface HabitCardProps {
   habit: Habit
@@ -13,21 +13,14 @@ export interface HabitCardProps {
 
 export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
-  const dateKey = todayKey ?? today()
   const storedHabit = useHabitStore((state) =>
     state.habits.find(({ id }) => id === habit.id),
   )
-  const checkIns = useHabitStore((state) => state.checkIns)
-  const toggleCheckIn = useHabitStore((state) => state.toggleCheckIn)
   const archiveHabit = useHabitStore((state) => state.archiveHabit)
   const restoreHabit = useHabitStore((state) => state.restoreHabit)
   const deleteHabit = useHabitStore((state) => state.deleteHabit)
   const currentHabit = storedHabit ?? habit
   const isArchived = currentHabit.archivedAt !== null
-  const isCheckedToday = checkIns.some(
-    (checkIn) =>
-      checkIn.habitId === currentHabit.id && checkIn.dateKey === dateKey,
-  )
 
   return (
     <article className="rounded-lg border border-line bg-surface-raised p-5 shadow-soft">
@@ -90,16 +83,11 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
       </div>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <button
-          aria-pressed={isCheckedToday}
-          className="rounded-md border border-brand px-4 py-2 text-sm font-semibold text-brand transition hover:bg-brand-light focus:outline-none focus:ring-2 focus:ring-brand disabled:cursor-not-allowed disabled:border-line disabled:text-ink-soft disabled:hover:bg-transparent data-[checked=true]:bg-brand data-[checked=true]:text-white"
-          data-checked={isCheckedToday}
+        <CheckInToggle
           disabled={isArchived}
-          onClick={() => toggleCheckIn(currentHabit.id, dateKey)}
-          type="button"
-        >
-          {isCheckedToday ? 'Checked today' : 'Check in today'}
-        </button>
+          habitId={currentHabit.id}
+          todayKey={todayKey}
+        />
 
         <div className="min-h-8" aria-label="Streak">
           {streakBadge}
