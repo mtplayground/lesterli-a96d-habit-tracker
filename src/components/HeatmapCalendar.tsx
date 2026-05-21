@@ -2,7 +2,7 @@ import { cloneElement, useMemo } from 'react'
 import type { KeyboardEvent, ReactElement, SVGProps } from 'react'
 import CalendarHeatmap from 'react-calendar-heatmap'
 import type { CalendarHeatmapValue } from 'react-calendar-heatmap'
-import { eachDayOfInterval, parseISO, subDays } from 'date-fns'
+import { eachDayOfInterval, format, parseISO, subDays } from 'date-fns'
 
 import { useHabitStore } from '../stores/habitStore'
 import type { DateKey, Habit } from '../types/habit'
@@ -57,9 +57,9 @@ const valueTitle = (value: HeatmapValue | null) => {
     return ''
   }
 
-  return value.checked
-    ? `${value.date}: checked in`
-    : `${value.date}: no check-in`
+  const status = value.checked ? 'Completed' : 'Not completed'
+
+  return `${format(parseISO(value.date), 'MMM d, yyyy')}: ${status}`
 }
 
 export function HeatmapCalendar({ habit, todayKey }: HeatmapCalendarProps) {
