@@ -1,6 +1,7 @@
 # Habit Tracker
 
-A Vite, React, and TypeScript starter for a local-first habit tracker.
+A Vite, React, TypeScript, and Tailwind CSS starter for a local-first habit
+tracker.
 
 ## Scripts
 
