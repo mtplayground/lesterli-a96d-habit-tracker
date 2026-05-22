@@ -2,6 +2,11 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import {
+  applyHabitImport,
+  type HabitExportPayload,
+  type HabitImportMode,
+} from '../utils/importExport'
+import {
   type CheckIn,
   type DateKey,
   type Habit,
@@ -22,6 +27,10 @@ interface HabitStoreActions {
   archiveHabit: (habitId: HabitId) => void
   restoreHabit: (habitId: HabitId) => void
   deleteHabit: (habitId: HabitId) => void
+  importHabitState: (
+    importedState: HabitExportPayload,
+    mode: HabitImportMode,
+  ) => void
   toggleCheckIn: (habitId: HabitId, dateKey: DateKey) => void
 }
 
@@ -156,6 +165,12 @@ export const useHabitStore = create<HabitStore>()(
           checkIns: state.checkIns.filter(
             (checkIn) => checkIn.habitId !== habitId,
           ),
+        }))
+      },
+
+      importHabitState: (importedState, mode) => {
+        set((state) => ({
+          ...applyHabitImport(state, importedState, mode),
         }))
       },
 

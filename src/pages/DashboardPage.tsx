@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ExportButton } from '../components/ExportButton'
 import { HabitList } from '../components/HabitList'
 import { HeatmapCalendar } from '../components/HeatmapCalendar'
+import { ImportControl } from '../components/ImportControl'
 import { StreakBadge } from '../components/StreakBadge'
 import { useHabitStore } from '../stores/habitStore'
 import type { Habit } from '../types/habit'
@@ -41,6 +42,7 @@ export function DashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
+          <ImportControl />
           <ExportButton />
           <Link
             className="inline-flex rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-surface"
