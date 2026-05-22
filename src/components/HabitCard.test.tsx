@@ -81,9 +81,9 @@ describe('HabitCard', () => {
     expect(badge).toHaveTextContent('🔥')
     expect(badge).toHaveTextContent('2 days')
     expect(badge).toHaveAttribute('title', 'Longest streak: 3 days')
-    expect(
-      screen.getByRole('group', { name: '30-day stats' }),
-    ).toHaveTextContent('5 / 30')
+    expect(screen.getByText('30 days').closest('div')).toHaveTextContent(
+      '5 / 30',
+    )
   })
 
   it('archives a habit from the actions menu', () => {
@@ -148,6 +148,23 @@ describe('HabitCard', () => {
 
     fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(useHabitStore.getState().habits).toHaveLength(1)
+  })
+
+  it('cancels delete confirmation with Escape', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Journal', color: '#7c3aed' })
+
+    render(<HabitCard habit={habit} />)
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus()
+
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' })
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(useHabitStore.getState().habits).toHaveLength(1)

@@ -61,7 +61,9 @@ describe('HabitDetailPage', () => {
     expect(screen.getByLabelText('May 21, 2026: Completed')).toHaveStyle({
       fill: '#2563eb',
     })
-    expect(screen.getByLabelText('30-day stats')).toHaveTextContent('1 / 30')
+    expect(screen.getByText('30 days').closest('div')).toHaveTextContent(
+      '1 / 30',
+    )
   })
 
   it('edits the habit with the inline form', () => {

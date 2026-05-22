@@ -6,6 +6,9 @@ import { StatsPanel } from './StatsPanel'
 import { useHabitStore } from '../stores/habitStore'
 import { SchemaVersion } from '../types/habit'
 
+const getStatsWindow = (label: string) =>
+  screen.getByText(label).closest('div') as HTMLElement
+
 describe('StatsPanel', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -33,35 +36,19 @@ describe('StatsPanel', () => {
     render(<StatsPanel habitId={habit.id} todayKey="2026-05-21" />)
 
     expect(screen.getByRole('heading', { name: 'Stats' })).toBeVisible()
+    expect(within(getStatsWindow('30 days')).getByText('3 / 30')).toBeVisible()
     expect(
-      within(screen.getByRole('group', { name: '30-day stats' })).getByText(
-        '3 / 30',
-      ),
+      within(getStatsWindow('30 days')).getByText('10% complete'),
+    ).toBeVisible()
+    expect(within(getStatsWindow('90 days')).getByText('4 / 90')).toBeVisible()
+    expect(
+      within(getStatsWindow('90 days')).getByText('4% complete'),
     ).toBeVisible()
     expect(
-      within(screen.getByRole('group', { name: '30-day stats' })).getByText(
-        '10% complete',
-      ),
+      within(getStatsWindow('365 days')).getByText('5 / 365'),
     ).toBeVisible()
     expect(
-      within(screen.getByRole('group', { name: '90-day stats' })).getByText(
-        '4 / 90',
-      ),
-    ).toBeVisible()
-    expect(
-      within(screen.getByRole('group', { name: '90-day stats' })).getByText(
-        '4% complete',
-      ),
-    ).toBeVisible()
-    expect(
-      within(screen.getByRole('group', { name: '365-day stats' })).getByText(
-        '5 / 365',
-      ),
-    ).toBeVisible()
-    expect(
-      within(screen.getByRole('group', { name: '365-day stats' })).getByText(
-        '1% complete',
-      ),
+      within(getStatsWindow('365 days')).getByText('1% complete'),
     ).toBeVisible()
   })
 
@@ -77,10 +64,6 @@ describe('StatsPanel', () => {
 
     render(<StatsPanel habitId={habit.id} todayKey="2026-05-21" />)
 
-    expect(
-      within(screen.getByRole('group', { name: '30-day stats' })).getByText(
-        '1 / 30',
-      ),
-    ).toBeVisible()
+    expect(within(getStatsWindow('30 days')).getByText('1 / 30')).toBeVisible()
   })
 })

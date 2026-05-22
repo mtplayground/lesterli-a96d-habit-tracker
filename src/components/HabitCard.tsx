@@ -6,6 +6,7 @@ import type { DateKey, Habit } from '../types/habit'
 import { today } from '../utils/date'
 import { computeStreaks } from '../utils/streaks'
 import { CheckInToggle } from './CheckInToggle'
+import { ConfirmDialog } from './ConfirmDialog'
 import { StatsPanel } from './StatsPanel'
 import { StreakBadge } from './StreakBadge'
 
@@ -44,6 +45,7 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
             <span
               aria-label={`${currentHabit.name} color`}
               className="h-4 w-4 shrink-0 rounded-full border border-line"
+              role="img"
               style={{ backgroundColor: currentHabit.color }}
             />
             <h2 className="truncate text-lg font-semibold text-ink">
@@ -119,43 +121,18 @@ export function HabitCard({ habit, streakBadge, todayKey }: HabitCardProps) {
       ) : null}
 
       {isConfirmingDelete ? (
-        <div
-          aria-labelledby={`delete-${currentHabit.id}-title`}
-          aria-modal="true"
-          className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4"
-          role="dialog"
+        <ConfirmDialog
+          confirmLabel="Delete habit"
+          onCancel={() => setIsConfirmingDelete(false)}
+          onConfirm={() => {
+            deleteHabit(currentHabit.id)
+            setIsConfirmingDelete(false)
+          }}
+          title={`Delete ${currentHabit.name}?`}
+          variant="danger"
         >
-          <div className="w-full max-w-sm rounded-lg bg-surface-raised p-5 shadow-soft">
-            <h3
-              id={`delete-${currentHabit.id}-title`}
-              className="text-lg font-semibold text-ink"
-            >
-              Delete {currentHabit.name}?
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-ink-muted">
-              This removes the habit and all of its check-ins.
-            </p>
-            <div className="mt-5 flex justify-end gap-3">
-              <button
-                className="rounded-md border border-line px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-brand"
-                onClick={() => setIsConfirmingDelete(false)}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                className="rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-surface"
-                onClick={() => {
-                  deleteHabit(currentHabit.id)
-                  setIsConfirmingDelete(false)
-                }}
-                type="button"
-              >
-                Delete habit
-              </button>
-            </div>
-          </div>
-        </div>
+          This removes the habit and all of its check-ins.
+        </ConfirmDialog>
       ) : null}
     </article>
   )
