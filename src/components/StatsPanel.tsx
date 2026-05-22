@@ -39,12 +39,7 @@ export function StatsPanel({ habitId, todayKey }: StatsPanelProps) {
           const windowStats = stats[window]
 
           return (
-            <div
-              aria-label={`${window}-day stats`}
-              className="min-w-0"
-              key={window}
-              role="group"
-            >
+            <div className="min-w-0" key={window}>
               <dt className="text-xs font-medium text-ink-muted">
                 {window} days
               </dt>
