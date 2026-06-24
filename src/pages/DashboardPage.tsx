@@ -4,6 +4,7 @@ import { ExportButton } from '../components/ExportButton'
 import { HabitList } from '../components/HabitList'
 import { HeatmapCalendar } from '../components/HeatmapCalendar'
 import { ImportControl } from '../components/ImportControl'
+import { SampleBanner } from '../components/SampleBanner'
 import { StreakBadge } from '../components/StreakBadge'
 import { useHabitStore } from '../stores/habitStore'
 import type { Habit } from '../types/habit'
@@ -52,6 +53,8 @@ export function DashboardPage() {
           </Link>
         </div>
       </section>
+
+      <SampleBanner />
 
       <HabitList
         onCreateHabit={() => navigate('/habits/new')}
