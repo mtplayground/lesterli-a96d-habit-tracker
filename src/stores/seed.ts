@@ -11,6 +11,8 @@ import { daysAgo } from '../utils/date'
 
 export const SEED_PREFIX = 'seed-'
 
+const SEED_HISTORY_DAYS = 150
+
 const iso = (days: number) => subDays(new Date(), days).toISOString()
 
 const checkInId = (habitId: HabitId, daysBack: number) =>
@@ -41,7 +43,7 @@ export const seedHabits: Habit[] = [
     name: 'Read 30 min',
     color: '#6366f1',
     description: 'Every night before bed',
-    createdAt: iso(90),
+    createdAt: iso(SEED_HISTORY_DAYS),
     updatedAt: iso(0),
     archivedAt: null,
   },
@@ -50,7 +52,7 @@ export const seedHabits: Habit[] = [
     name: 'Move outside',
     color: '#16a34a',
     description: 'Walk, stretch, or bike on weekdays',
-    createdAt: iso(75),
+    createdAt: iso(SEED_HISTORY_DAYS),
     updatedAt: iso(0),
     archivedAt: null,
   },
@@ -59,7 +61,7 @@ export const seedHabits: Habit[] = [
     name: 'Drink water',
     color: '#0ea5e9',
     description: 'Hit the bottle goal before dinner',
-    createdAt: iso(60),
+    createdAt: iso(SEED_HISTORY_DAYS),
     updatedAt: iso(0),
     archivedAt: null,
   },
@@ -68,7 +70,7 @@ export const seedHabits: Habit[] = [
     name: 'Meditate',
     color: '#a855f7',
     description: 'Build a calm five-minute reset',
-    createdAt: iso(21),
+    createdAt: iso(SEED_HISTORY_DAYS),
     updatedAt: iso(0),
     archivedAt: null,
   },
@@ -77,30 +79,43 @@ export const seedHabits: Habit[] = [
     name: 'Sleep by 11',
     color: '#f97316',
     description: 'Recovering the routine one night at a time',
-    createdAt: iso(120),
+    createdAt: iso(SEED_HISTORY_DAYS),
     updatedAt: iso(0),
     archivedAt: null,
   },
 ]
 
 const seedCheckIns = (): CheckIn[] => [
-  // Hero streak: a perfect 24-day run.
-  ...fill('seed-read', 24, () => true),
+  // Hero streak: a perfect 150-day run to fill the shortened heatmap.
+  ...fill('seed-read', SEED_HISTORY_DAYS, () => true),
 
   // Weekday rhythm: consistent movement Monday through Friday.
-  ...fill('seed-move', 42, isWeekday),
+  ...fill('seed-move', SEED_HISTORY_DAYS, isWeekday),
 
-  // Near-perfect: only a few misses in the recent window.
-  ...fill('seed-water', 35, (daysBack) => ![6, 17, 28].includes(daysBack)),
+  // Near-perfect: only a few misses spread through the full sample window.
+  ...fill(
+    'seed-water',
+    SEED_HISTORY_DAYS,
+    (daysBack) =>
+      ![6, 17, 28, 43, 59, 74, 91, 108, 126, 141].includes(daysBack),
+  ),
 
-  // New habit ramp: sparse start, then several recent wins.
-  ...fill('seed-meditate', 21, (daysBack) =>
-    [0, 1, 2, 4, 7, 11, 16, 20].includes(daysBack),
+  // New habit ramp: sparse early starts, then several recent wins.
+  ...fill(
+    'seed-meditate',
+    SEED_HISTORY_DAYS,
+    (daysBack) =>
+      [0, 1, 2, 4, 7, 11, 16, 20].includes(daysBack) ||
+      daysBack % 9 === 0 ||
+      daysBack % 9 === 4 ||
+      daysBack === SEED_HISTORY_DAYS - 1,
   ),
 
   // Hardest item, recovering: older gaps with a visible recent restart.
-  ...fill('seed-sleep', 90, (daysBack) =>
-    [0, 1, 3, 7, 14, 23, 37, 52, 70, 88].includes(daysBack),
+  ...fill('seed-sleep', SEED_HISTORY_DAYS, (daysBack) =>
+    [0, 1, 3, 7, 14, 23, 37, 52, 70, 88, 106, 124, 142, 149].includes(
+      daysBack,
+    ),
   ),
 ]
 

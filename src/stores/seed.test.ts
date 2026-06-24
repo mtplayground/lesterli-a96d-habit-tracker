@@ -36,7 +36,7 @@ describe('seedState', () => {
     const habitIds = new Set(state.habits.map((habit) => habit.id))
     const checkInIds = new Set(state.checkIns.map((checkIn) => checkIn.id))
 
-    expect(state.checkIns.length).toBeGreaterThan(70)
+    expect(state.checkIns.length).toBeGreaterThan(400)
     expect(checkInIds.size).toBe(state.checkIns.length)
     expect(
       state.checkIns.every((checkIn) => habitIds.has(checkIn.habitId)),
@@ -55,17 +55,22 @@ describe('seedState', () => {
       .filter((checkIn) => checkIn.habitId === 'seed-read')
       .map((checkIn) => checkIn.dateKey)
 
-    expect(readDates).toHaveLength(24)
+    expect(readDates).toHaveLength(150)
     expect(readDates).toContain(daysAgo(0))
-    expect(readDates).toContain(daysAgo(23))
-    expect(readDates).not.toContain(daysAgo(24))
+    expect(readDates).toContain(daysAgo(149))
+    expect(readDates).not.toContain(daysAgo(150))
 
-    expect(
-      state.checkIns.filter((checkIn) => checkIn.habitId === 'seed-meditate'),
-    ).toHaveLength(8)
-    expect(
-      state.checkIns.filter((checkIn) => checkIn.habitId === 'seed-sleep'),
-    ).toHaveLength(10)
+    const meditateDates = state.checkIns
+      .filter((checkIn) => checkIn.habitId === 'seed-meditate')
+      .map((checkIn) => checkIn.dateKey)
+    const sleepDates = state.checkIns
+      .filter((checkIn) => checkIn.habitId === 'seed-sleep')
+      .map((checkIn) => checkIn.dateKey)
+
+    expect(meditateDates.length).toBeGreaterThan(35)
+    expect(meditateDates).toContain(daysAgo(149))
+    expect(sleepDates).toHaveLength(14)
+    expect(sleepDates).toContain(daysAgo(149))
   })
 
   it('returns fresh arrays and habit objects for each initial state', () => {
