@@ -20,7 +20,7 @@ describe('HeatmapCalendar', () => {
     cleanup()
   })
 
-  it('renders a trailing 365-day heatmap ending today', () => {
+  it('renders a trailing 133-day heatmap ending today', () => {
     const habit = useHabitStore
       .getState()
       .addHabit({ name: 'Hydrate', color: '#28705c' })
@@ -30,10 +30,10 @@ describe('HeatmapCalendar', () => {
     expect(screen.getAllByTestId('heatmap-day')).toHaveLength(
       HEATMAP_TRAILING_DAYS,
     )
-    expect(screen.getByLabelText('May 22, 2025: Not completed')).toBeVisible()
+    expect(screen.getByLabelText('Jan 9, 2026: Not completed')).toBeVisible()
     expect(screen.getByLabelText('May 21, 2026: Not completed')).toBeVisible()
     expect(
-      screen.queryByLabelText('May 21, 2025: Not completed'),
+      screen.queryByLabelText('Jan 8, 2026: Not completed'),
     ).not.toBeInTheDocument()
   })
 
