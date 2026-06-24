@@ -11,5 +11,9 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: 8080,
+    allowedHosts: [
+      'lesterli-a96d-habit-tracker-7fe83e-bp4af.sprites.app',
+      'lesterli-a96d-habit-tracker-7fe83e-bp4af.mctai.app',
+    ],
   },
 })
