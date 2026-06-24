@@ -5,6 +5,7 @@ import {
   migrateHabitStore,
   useHabitStore,
 } from './habitStore'
+import { SEED_PREFIX } from './seed'
 import { SchemaVersion } from '../types/habit'
 
 describe('useHabitStore', () => {
@@ -15,6 +16,17 @@ describe('useHabitStore', () => {
       habits: [],
       checkIns: [],
     })
+  })
+
+  it('uses seed data for the first-run store state', () => {
+    const initial = useHabitStore.getInitialState()
+
+    expect(initial.schemaVersion).toBe(SchemaVersion)
+    expect(initial.habits).toHaveLength(5)
+    expect(
+      initial.habits.every((habit) => habit.id.startsWith(SEED_PREFIX)),
+    ).toBe(true)
+    expect(initial.checkIns.length).toBeGreaterThan(0)
   })
 
   it('adds a habit with normalized fields', () => {
@@ -157,6 +169,22 @@ describe('useHabitStore', () => {
     expect(migrateHabitStore(persistedState, SchemaVersion)).toBe(
       persistedState,
     )
+  })
+
+  it('keeps invalid persisted state migration fallback empty', () => {
+    expect(migrateHabitStore(null, SchemaVersion)).toEqual({
+      schemaVersion: SchemaVersion,
+      habits: [],
+      checkIns: [],
+    })
+
+    expect(
+      migrateHabitStore({ schemaVersion: SchemaVersion }, SchemaVersion),
+    ).toEqual({
+      schemaVersion: SchemaVersion,
+      habits: [],
+      checkIns: [],
+    })
   })
 
   it('stamps migrated legacy state with the current schema version', () => {
