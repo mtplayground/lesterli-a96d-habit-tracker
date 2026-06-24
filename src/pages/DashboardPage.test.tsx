@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useHabitStore } from '../stores/habitStore'
+import { seedState } from '../stores/seed'
 import { SchemaVersion } from '../types/habit'
 import { DashboardPage } from './DashboardPage'
 
@@ -41,6 +42,21 @@ describe('DashboardPage', () => {
       'href',
       '/habits/new',
     )
+  })
+
+  it('renders the sample banner above the habit list when seeded', () => {
+    useHabitStore.setState(seedState())
+
+    renderDashboard()
+
+    const banner = screen.getByLabelText('Sample data notice')
+    const habitListTitle = screen.getByRole('heading', { name: 'Habits' })
+
+    expect(banner).toBeVisible()
+    expect(
+      banner.compareDocumentPosition(habitListTitle) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 
   it('navigates to new habit from the empty state CTA', () => {
