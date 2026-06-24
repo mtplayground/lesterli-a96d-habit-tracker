@@ -86,34 +86,42 @@ export const seedHabits: Habit[] = [
 ]
 
 const seedCheckIns = (): CheckIn[] => [
-  // Hero streak: a perfect 150-day run to fill the shortened heatmap.
+  // Anchor habit: a complete daily streak for an easy-to-read baseline.
   ...fill('seed-read', SEED_HISTORY_DAYS, () => true),
 
-  // Weekday rhythm: consistent movement Monday through Friday.
-  ...fill('seed-move', SEED_HISTORY_DAYS, isWeekday),
+  // Workweek rhythm with a few travel days and low-energy Fridays missed.
+  ...fill(
+    'seed-move',
+    SEED_HISTORY_DAYS,
+    (daysBack) =>
+      isWeekday(daysBack) &&
+      ![8, 19, 34, 47, 63, 79, 96, 113, 128, 144].includes(daysBack),
+  ),
 
-  // Near-perfect: only a few misses spread through the full sample window.
+  // High-volume hydration with scattered realistic misses instead of a grid.
   ...fill(
     'seed-water',
     SEED_HISTORY_DAYS,
     (daysBack) =>
-      ![6, 17, 28, 43, 59, 74, 91, 108, 126, 141].includes(daysBack),
+      ![5, 12, 18, 27, 41, 56, 58, 73, 89, 101, 119, 136, 143].includes(
+        daysBack,
+      ),
   ),
 
-  // New habit ramp: sparse early starts, then several recent wins.
+  // Meditation ramps from sporadic attempts into a stronger recent cadence.
   ...fill(
     'seed-meditate',
     SEED_HISTORY_DAYS,
     (daysBack) =>
-      [0, 1, 2, 4, 7, 11, 16, 20].includes(daysBack) ||
-      daysBack % 9 === 0 ||
-      daysBack % 9 === 4 ||
-      daysBack === SEED_HISTORY_DAYS - 1,
+      daysBack === SEED_HISTORY_DAYS - 1 ||
+      (daysBack <= 28 && ![3, 9, 15, 22, 27].includes(daysBack)) ||
+      (daysBack > 28 && daysBack % 8 === 1) ||
+      daysBack % 13 === 0,
   ),
 
-  // Hardest item, recovering: older gaps with a visible recent restart.
+  // Sleep remains the hardest habit: sparse wins plus a visible recent restart.
   ...fill('seed-sleep', SEED_HISTORY_DAYS, (daysBack) =>
-    [0, 1, 3, 7, 14, 23, 37, 52, 70, 88, 106, 124, 142, 149].includes(
+    [0, 1, 2, 5, 9, 16, 24, 35, 49, 67, 88, 111, 132, 149].includes(
       daysBack,
     ),
   ),
