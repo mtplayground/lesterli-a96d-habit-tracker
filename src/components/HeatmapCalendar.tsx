@@ -8,7 +8,7 @@ import { useHabitStore } from '../stores/habitStore'
 import type { DateKey, Habit } from '../types/habit'
 import { toDateKey, today } from '../utils/date'
 
-export const HEATMAP_TRAILING_DAYS = 365
+export const HEATMAP_TRAILING_DAYS = 133
 
 interface HeatmapValue extends CalendarHeatmapValue {
   checked: boolean
