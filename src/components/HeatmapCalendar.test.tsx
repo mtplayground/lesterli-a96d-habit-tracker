@@ -2,7 +2,11 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { HeatmapCalendar, HEATMAP_TRAILING_DAYS } from './HeatmapCalendar'
+import {
+  HeatmapCalendar,
+  HEATMAP_CELL_SIZE_PX,
+  HEATMAP_TRAILING_DAYS,
+} from './HeatmapCalendar'
 import { useHabitStore } from '../stores/habitStore'
 import { SchemaVersion } from '../types/habit'
 
@@ -35,6 +39,21 @@ describe('HeatmapCalendar', () => {
     expect(
       screen.queryByLabelText('Jan 8, 2026: Not completed'),
     ).not.toBeInTheDocument()
+  })
+
+  it('sizes the heatmap from a fixed 16px rendered cell width', () => {
+    const habit = useHabitStore
+      .getState()
+      .addHabit({ name: 'Hydrate', color: '#28705c' })
+
+    render(<HeatmapCalendar habit={habit} todayKey="2026-05-21" />)
+
+    const heatmap = screen.getByLabelText('Hydrate check-in heatmap')
+    const firstCell = screen.getAllByTestId('heatmap-day')[0]
+
+    expect(HEATMAP_CELL_SIZE_PX).toBe(16)
+    expect(firstCell).toHaveAttribute('width', '10')
+    expect(heatmap).toHaveStyle({ '--heatmap-width': '411.2px' })
   })
 
   it('shows formatted date and completion status in cell tooltips', () => {
