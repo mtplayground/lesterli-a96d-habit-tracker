@@ -14,6 +14,7 @@ import {
   type HabitStoreState,
   SchemaVersion,
 } from '../types/habit'
+import { seedState } from './seed'
 
 export const HABIT_STORE_STORAGE_KEY = 'habit-tracker-store'
 
@@ -97,7 +98,7 @@ export const migrateHabitStore = (
 export const useHabitStore = create<HabitStore>()(
   persist(
     (set, get) => ({
-      ...initialState,
+      ...seedState(),
 
       addHabit: (habit) => {
         const nextHabit = normalizeHabit(habit, timestamp())
