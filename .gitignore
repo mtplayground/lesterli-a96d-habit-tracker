@@ -21,6 +21,9 @@ test-results/
 .claude/
 .database_url
 .db_decision
+.storage_decision
+.authemail_decision
+.deploy_url
 .env.production
 .task_id
 .container_name
@@ -30,6 +33,8 @@ test-results/
 .pipeline-state.json
 .gitkeep
 .progress
+verify-screenshot.png
+ui-verify.cjs
 
 # Editor directories and files
 .vscode/*

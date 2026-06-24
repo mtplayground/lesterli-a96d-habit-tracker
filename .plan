@@ -1,66 +1,26 @@
-# Architecture Plan
+# Architecture Plan: Sample Habit Seed Data
 
-## Project Shape
+## Module structure and file organization
 
-Build a Vite + React + TypeScript single-page app for local-first habit tracking. The app should be static-deployable, use strict TypeScript, Tailwind CSS for styling, Zustand for state management with `localStorage` persistence, Vitest/React Testing Library for unit and component tests, and Playwright for the final happy-path E2E test.
+- Add `src/stores/seed.ts` as the dedicated sample-data module. It will export:
+  - `SEED_PREFIX = 'seed-'` for identifying sample records.
+  - `seedState(): HabitStoreState` to generate a complete initial state with schema version, sample habits, and check-ins.
+- Keep persisted model types centralized in `src/types/habit.ts`; seed data should use the existing `Habit`, `CheckIn`, and `HabitStoreState` types rather than introducing parallel DTOs.
+- Keep store mutation and persistence behavior in `src/stores/habitStore.ts`; issue #64 should only switch the default store spread from `initialState` to `seedState()` while preserving `initialState` for migration fallback.
+- Add `src/components/SampleBanner.tsx` as a focused dashboard component. It should read from `useHabitStore`, detect sample data via `SEED_PREFIX`, and clear state through the existing `importHabitState(..., 'replace')` action.
+- Render `SampleBanner` in `src/pages/DashboardPage.tsx` above `HabitList` so sample-data context appears before the list.
 
-## Module Structure
+## Issue dependencies
 
-```text
-src/
-  app/
-    App.tsx
-    router.tsx
-  components/
-    habits/
-      HabitForm.tsx
-      HabitCard.tsx
-      HabitList.tsx
-      EmptyState.tsx
-      CheckInToggle.tsx
-      HeatmapCalendar.tsx
-      StreakBadge.tsx
-      StatsPanel.tsx
-    ui/
-      ConfirmDialog.tsx
-  pages/
-    DashboardPage.tsx
-    HabitDetailPage.tsx
-    NewHabitPage.tsx
-  store/
-    habitStore.ts
-    persistence.ts
-    migrations.ts
-  types/
-    habit.ts
-  utils/
-    dates.ts
-    streaks.ts
-    stats.ts
-    importExport.ts
-  test/
-    setup.ts
-```
+1. #63 must land first because it creates `seedState()` and `SEED_PREFIX`.
+2. #64 depends on #63 and wires `seedState()` into the Zustand persisted store initialization.
+3. #65 depends on #63 for `SEED_PREFIX` and on the existing store import action to clear sample data.
 
-Shared domain types live in `src/types/habit.ts` and should be imported by store, utility, and component modules. Store actions own mutations and persistence. Date, streak, stats, and import/export logic should stay outside React components so they can be tested directly.
+## Key design decisions
 
-## Issue Dependencies
-
-1. Foundation: #1, #2, #3, #4, #5
-2. Domain and data layer: #6, #7, #8, #9
-3. Date and analytics utilities: #10, #11, #12
-4. Core habit UI: #13, #14, #15, #16, #17
-5. Heatmap and feedback UI: #18, #19, #20, #21, #22
-6. Routing and pages: #23, #24, #25, #26
-7. Data portability: #27, #28
-8. Final quality pass: #29, #30, #31
-
-## Key Design Decisions
-
-- Model habits as immutable records with stable IDs, metadata, archive state, and check-ins keyed by local date strings (`YYYY-MM-DD`).
-- Treat the local timezone as the source of truth for "today"; avoid UTC date keys for user-facing check-ins.
-- Keep migrations versioned and idempotent, even if the first scaffold only supports the initial schema.
-- Persist only serializable app state, not derived streaks or stats. Compute derived values from `Habit` and `CheckIn` data.
-- Validate imported JSON before mutating the store, then run it through the migration layer.
-- Prefer accessible native controls, focus management for dialogs, keyboard support for heatmap toggles, and visible focus states from the start.
-- Keep routes simple: `/` for active habits, `/habits/new` for creation, and `/habits/:id` for detail/edit/stats/history.
+- Seed data is local-only initial data, not a migration fallback. Invalid persisted data should still fall back to the empty `initialState`.
+- `seedState()` should return fresh arrays/objects each call to avoid shared mutable state in tests and runtime initialization.
+- Sample IDs should consistently use the `seed-` prefix so UI detection stays simple and reliable.
+- Check-ins should use the existing local date-key convention and realistic recent dates so current streaks, completion stats, and the heatmap demonstrate the product.
+- Clearing sample data should reuse the existing import/replace path with `{ schemaVersion, habits: [], checkIns: [] }`, avoiding a new store action.
+- Tests for each issue should cover generated seed shape, initial-store seeding behavior, and SampleBanner visibility/clear behavior.
