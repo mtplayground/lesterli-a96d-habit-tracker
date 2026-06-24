@@ -36,7 +36,10 @@
   }
 
   .habit-heatmap .react-calendar-heatmap {
-    min-width: 42rem;
+    width: var(--heatmap-width);
+    min-width: var(--heatmap-width);
+    max-width: none;
+    height: auto;
   }
 
   .habit-heatmap .react-calendar-heatmap text {
